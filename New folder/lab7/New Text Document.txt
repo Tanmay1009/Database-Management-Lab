@@ -1,0 +1,89 @@
+
+
+
+Queries:
+
+1)  SELECT DISTINCT room_id
+	FROM room_location
+	WHERE room_location.course_id='BT101 '
+	OR room_location.course_id='BT101 '
+	OR room_location.course_id='CE201 '`									
+	OR room_location.course_id='CH211 '
+	OR room_location.course_id='CL205 '
+	OR room_location.course_id='CS101 '
+	OR room_location.course_id='DD111 '
+	OR room_location.course_id='EE206 '
+	OR room_location.course_id='HS113 '
+	OR room_location.course_id='MA102 '
+	OR room_location.course_id='ME101 '
+	OR room_location.course_id='PH102 '
+	OR room_location.course_id='RT515 ';
+	
+	
+2)  SELECT DISTINCT room_id,	roll_number
+	FROM room_location
+	WHERE course_id='CS101';
+	
+3)  SELECT DISTINCT courses.cname,rooms.location 
+	FROM courses,rooms,room_location 
+	WHERE room_location.course_id=courses.cid  
+	AND room_location.room_id=rooms.room_id
+	AND room_location.date='03-05-2020'
+	AND room_location.time='14:00 to 17:00';
+	
+4)  SELECT DISTINCT room_location.course_id
+	FROM room_location,rooms
+	WHERE rooms.room_id=room_location.room_id
+	ANd (rooms.location='Core V' OR rooms.location='Gallery II');	
+
+5) 	SELECT DISTINCT room_location.course_id
+	FROM rooms,room_location
+	WHERE rooms.room_id=room_location.room_id
+	AND rooms.location='Core I'
+	AND room_location.course_id NOT IN (		
+	SELECT DISTINCT room_location.course_id
+	FROM rooms,room_location
+	WHERE rooms.room_id=room_location.room_id
+	AND rooms.location='Lecture Hall');	
+										
+										
+6)  SELECT ta.course_id
+	FROM (SELECT room_location.course_id AS course_id,COUNT(room_id) AS num
+	FROM room_location
+	GROUP BY room_location.course_id) AS ta
+	WHERE ta.num = ( SELECT MIN(num) FROM (SELECT COUNT(room_id) as num FROM room_location  GROUP BY room_location.course_id) AS ta);
+
+	
+	
+	
+7)  SELECT ta.course_id
+	FROM (SELECT room_location.course_id AS course_id,COUNT(room_id) AS num
+	FROM room_location
+	GROUP BY room_location.course_id) AS ta
+	WHERE ta.num = (	 SELECT MAX(num) FROM (SELECT COUNT(room_id) as num FROM room_location  GROUP BY room_location.course_id) AS ta);	
+	
+	
+8)	SELECT room_location.room_id
+	FROM room_location
+	GROUP BY room_location.room_id
+	HAVING COUNT(roll_number) IN (SELECT MAX(num)
+	FROM(
+	SELECT COUNT(roll_number) AS NUM
+	FROM room_location 
+	GROUP BY room_location.room_id
+	) AS ta);
+	
+9)  SELECT DISTINCT room_location.course_id
+	FROM room_location
+	WHERE room_location.time="09:00 to 11:00" OR room_location.time="14:00 to 16:00"
+	AND room_location.course_id NOT IN(SELECT DISTINCT room_location.course_id
+	FROM room_location
+	WHERE room_location.time="09:00 to 12:00" OR room_location.time="14:00 to 17:00");
+	 
+	
+10) SELECT DISTINCT room_location.course_id
+	FROM room_location
+	WHERE room_location.time="09:00 to 12:00" OR room_location.time="14:00 to 17:00"
+	AND room_location.course_id NOT IN(SELECT DISTINCT room_location.course_id
+	FROM room_location
+	WHERE room_location.time="09:00 to 11:00" OR room_location.time="14:00 to 16:00");
